@@ -13,19 +13,20 @@
 struct Employee
 {
     int id;
-    char name[100];
-    double salary;
-    double tax;
-    char address[150];
     int age;
+    char name[100];
+    char address[200];
     char gender[8];
+    double salary;
     double overTime;
+    double tax;
 };
 
 // Global Variables
 struct Employee EArr[10];
 int MenuCurrent = 0, ExitFlag = 0, currentView = 0; // 0 main
 
+// Writing to console Functions
 void gotoxy(int column, int line)
 {
     COORD coord;
@@ -39,12 +40,17 @@ void textattr(int i)
 {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), i);
 }
-void showMainMenu()
+void clearScreen()
 {
-    printf("working");
-    char choices[6][15] = {" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"};
     textattr(NormalPen);
     system("cls");
+}
+
+// Main Menu Functions
+void showMainMenu()
+{
+    clearScreen();
+    char choices[6][15] = {" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"};
     for (int i = 0; i < 6; i++)
     {
         gotoxy(15, 10 + 3 * i);
@@ -59,18 +65,7 @@ void showMainMenu()
         printf(choices[i]);
     }
 }
-void initId()
-{
-    for (int i = 0; i < 10; i++)
-    {
-        EArr[i].id = -1;
-    }
-}
-void Init()
-{
-    showMainMenu();
-    initId();
-}
+
 void updateMainMenu()
 {
     char inp;
@@ -83,7 +78,7 @@ void updateMainMenu()
     case Enter:
         //" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"
         if (MenuCurrent == 0)
-            showInputForm();
+            currentView = 1;
         else if (MenuCurrent == 1)
             showEmpByID();
         else if (MenuCurrent == 2)
@@ -115,29 +110,96 @@ void updateMainMenu()
     }
     showMainMenu();
 }
+
+// Initialization Functions
+void initId()
+{
+    for (int i = 0; i < 10; i++)
+    {
+        EArr[i].id = -1;
+    }
+}
+
+void Init()
+{
+    showMainMenu();
+    initId();
+}
+
+// Input Functions
+
+char isIdExist(int empId)
+{
+    return EArr[empId].id != -1;
+}
+
+int chooseEmpID()
+{
+    clearScreen();
+    int temp;
+    do
+    {
+        printf("Please Choose EmpID between 1 and 10 : ");
+        scanf("%i", temp);
+        if (isIdExist(temp))
+        {
+            printf("\nThis ID already used.\n");
+        }
+
+    } while (isIdExist(temp));
+    return temp;
+}
+
 void showInputForm()
 {
+    clearScreen();
     char returnFlag = 0;
-    textattr(NormalPen);
-    system("cls");
-
-    char inpFeilds[8][15] = {"ID", "Name", "Salary", "Tax", "Address", "Age", "Gender", "Over Time"};
+    char inpFields[8][15] = {"ID", "Name", "Salary", "Tax", "Address", "Age", "Gender", "Over Time"};
     int shift = 3;
     for (int i = 0; i < 5; i++)
     {
         gotoxy(5, 10 + 3 * i);
-        printf(inpFeilds[i]);
+        printf(inpFields[i]);
     }
     for (int i = 0; i < 3; i++)
     {
         gotoxy(40, 10 + 3 * i);
-        printf(inpFeilds[i + 5]);
+        printf(inpFields[i + 5]);
     }
 }
-void receiveInput(int EmpId)
+void receiveFormInput(int empID)
+{
+    struct Employee temp;
+    gotoxy(15, 10);
+    scanf("%i", &temp.id);
+    gotoxy(15, 13);
+    scanf("%s", temp.name);
+    gotoxy(15, 16);
+    scanf("%lf", &temp.salary);
+    gotoxy(15, 19);
+    scanf("%lf", &temp.tax);
+    gotoxy(15, 22);
+    scanf("%s", temp.address);
+
+    gotoxy(55, 10);
+    scanf("%i", &temp.age);
+    gotoxy(55, 13);
+    scanf("%s", temp.gender);
+    gotoxy(15, 19);
+    scanf("%lf", &temp.overTime);
+    EArr[empID] = temp;
+}
+void showNetSalary(int id)
+{
+    clearScreen();
+    double net = EArr[id].salary + EArr[id].overTime - EArr[id].tax;
+    printf("Employee #%i Net Salary : %lf", id, net);
+    printf("Press Any key to return to main menu");
+    _getch();
+}
+void showEmpByID()
 {
 }
-void showEmpByID() {}
 void showAllEmp() {}
 void DeleteEmpById() {}
 void DeleteAllEmp() {}
@@ -154,10 +216,10 @@ int main()
             updateMainMenu();
             break;
         case 1:
-            printf("Please Choose EmpID between 1 and 10 : ");
-            scanf("%i", temp);
+            temp = chooseEmpID(); // a waste of 4 bytes :(
             showInputForm();
-            receiveInput(temp - 1);
+            receiveFormInput(temp);
+            showNetSalary(temp);
             showMainMenu();
             currentView = 0;
             break;
