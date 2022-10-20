@@ -29,7 +29,7 @@ int MenuCurrent = 0, ExitFlag = 0, currentView = 0; // 0 main
 void printEmpData(empID)
 {
     struct Employee temp = EArr[empID];
-    printf("\nEmployee #%i\nName : %s ,Age: %d ,Gender: %s ,Salary : %lf ,Over Time : %lf ,Tax : %lf ,Address : %s \n",
+    printf("\nEmployee #%i\nName : %s ,Age: %d ,Gender: %s ,Salary : %.2lf ,Over Time : %.2lf ,Tax : %.2lf ,Address : %s \n",
            temp.id, temp.name, temp.age, temp.gender, temp.salary, temp.overTime, temp.tax, temp.address);
 }
 
@@ -71,6 +71,11 @@ void showMainMenu()
     }
 }
 
+void returnToMainMenu()
+{
+    showMainMenu();
+    currentView = 0;
+}
 void updateMainMenu()
 {
     char inp;
@@ -85,7 +90,7 @@ void updateMainMenu()
         if (MenuCurrent == 0)
             currentView = 1;
         else if (MenuCurrent == 1)
-            showEmpByID();
+            currentView = 2;
         else if (MenuCurrent == 2)
             showAllEmp();
         else if (MenuCurrent == 3)
@@ -203,10 +208,70 @@ void showNetSalary(int id)
 }
 void showEmpByID()
 {
+    clearScreen();
+    int id;
+    char returnFlag = 0;
+    do
+    {
+        printf("Please Choose EmpID between 1 and 10 : ");
+        scanf("%i", &id);
+        if (isIdExist(id))
+        {
+            printEmpData(id);
+        }
+        else
+        {
+            printf("\nThis ID Does Not Exist.\n");
+            printf("\nPlease Try Again or press Backspace to return\n");
+            char ch = _getch();
+            if (ch == 8)
+                returnFlag = 1;
+        }
+    } while (!isIdExist(id) && !returnFlag);
 }
-void showAllEmp() {}
-void DeleteEmpById() {}
-void DeleteAllEmp() {}
+void showAllEmp()
+{
+    for (int i = 0; i < 10; i++)
+    {
+        if (isIdExist(i))
+        {
+            printEmpData(i);
+        }
+    }
+}
+void DeleteEmpById()
+{
+    clearScreen();
+    int id;
+    char returnFlag = 0;
+    do
+    {
+        printf("Please Choose EmpID between 1 and 10 : ");
+        scanf("%i", &id);
+        if (isIdExist(id))
+        {
+            EArr[id].id = -1;
+            returnFlag = 1;
+        }
+        else
+        {
+            printf("\nThis ID Does Not Exist.\n");
+            printf("\nPlease Try Again or press Backspace to return\n");
+            char ch = _getch();
+            if (ch == 8)
+                returnFlag = 1;
+        }
+    } while (!isIdExist(id) && !returnFlag);
+}
+void DeleteAllEmp()
+{
+    clearScreen();
+    printf("Are You sure You want to delete !!! ALL !!! Employee Data ? y/n\n");
+    char ch = _getche();
+    if (ch == 'y')
+        for (int i = 0; i < i; i++)
+            EArr[i].id = -1;
+}
 
 int main()
 {
@@ -224,8 +289,15 @@ int main()
             showInputForm();
             receiveFormInput(temp);
             showNetSalary(temp);
-            showMainMenu();
-            currentView = 0;
+            returnToMainMenu();
+            break;
+        case 2:
+            showEmpByID();
+            returnToMainMenu();
+            break;
+        case 3:
+            showAllEmp();
+            returnToMainMenu();
             break;
         default:
             break;
