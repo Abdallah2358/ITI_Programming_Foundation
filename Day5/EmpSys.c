@@ -28,8 +28,8 @@ int MenuCurrent = 0, ExitFlag = 0, currentView = 0; // 0 main
 // emp func
 void printEmpData(empID)
 {
-    struct Employee temp;
-    printf("Employee #%i\nName : %s ,Age: %d ,Gender: %s ,Salary : %lf ,Over Time : %lf ,Tax : %lf ,Address : %s ",
+    struct Employee temp = EArr[empID];
+    printf("\nEmployee #%i\nName : %s ,Age: %d ,Gender: %s ,Salary : %lf ,Over Time : %lf ,Tax : %lf ,Address : %s \n",
            temp.id, temp.name, temp.age, temp.gender, temp.salary, temp.overTime, temp.tax, temp.address);
 }
 
@@ -131,7 +131,6 @@ void Init()
 }
 
 // Input Functions
-
 char isIdExist(int empId)
 {
     return EArr[empId].id != -1;
@@ -168,7 +167,7 @@ void showInputForm()
     for (int i = 0; i < 3; i++)
     {
         gotoxy(40, 10 + 3 * i);
-        printf(inpFields[i + 5]);
+        printf(inpFields[i + 4]);
     }
 }
 void receiveFormInput(int empID)
@@ -188,16 +187,18 @@ void receiveFormInput(int empID)
     scanf("%i", &temp.age);
     gotoxy(55, 13);
     scanf("%s", temp.gender);
-    gotoxy(55, 19);
+    gotoxy(55, 16);
     scanf("%lf", &temp.overTime);
+
     EArr[empID] = temp;
 }
 void showNetSalary(int id)
 {
     clearScreen();
     double net = EArr[id].salary + EArr[id].overTime - EArr[id].tax;
-    printf("Employee #%i Net Salary : %lf", id, net);
-    printf("Press Any key to return to main menu");
+    printEmpData(id);
+    printf("Net Salary : %lf\n", id, net);
+    printf("Press Any key to return to main menu\n");
     _getch();
 }
 void showEmpByID()
