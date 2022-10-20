@@ -25,6 +25,13 @@ struct Employee
 // Global Variables
 struct Employee EArr[10];
 int MenuCurrent = 0, ExitFlag = 0, currentView = 0; // 0 main
+// emp func
+void printEmpData(empID)
+{
+    struct Employee temp;
+    printf("Employee #%i\nName : %s ,Age: %d ,Gender: %s ,Salary : %lf ,Over Time : %lf ,Tax : %lf ,Address : %s ",
+           temp.id, temp.name, temp.age, temp.gender, temp.salary, temp.overTime, temp.tax, temp.address);
+}
 
 // Writing to console Functions
 void gotoxy(int column, int line)
@@ -32,9 +39,7 @@ void gotoxy(int column, int line)
     COORD coord;
     coord.X = column;
     coord.Y = line;
-    SetConsoleCursorPosition(
-        GetStdHandle(STD_OUTPUT_HANDLE),
-        coord);
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 void textattr(int i)
 {
@@ -90,7 +95,6 @@ void updateMainMenu()
         else if (MenuCurrent == 5)
             ExitFlag = 1;
         break;
-
     case -32:
         inp = _getche();
         switch (inp)
@@ -140,7 +144,7 @@ int chooseEmpID()
     do
     {
         printf("Please Choose EmpID between 1 and 10 : ");
-        scanf("%i", temp);
+        scanf("%i", &temp);
         if (isIdExist(temp))
         {
             printf("\nThis ID already used.\n");
@@ -154,9 +158,9 @@ void showInputForm()
 {
     clearScreen();
     char returnFlag = 0;
-    char inpFields[8][15] = {"ID", "Name", "Salary", "Tax", "Address", "Age", "Gender", "Over Time"};
+    char inpFields[8][15] = {"Name :", "Salary :", "Tax :", "Address :", "Age :", "Gender :", "Over Time :"};
     int shift = 3;
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 4; i++)
     {
         gotoxy(5, 10 + 3 * i);
         printf(inpFields[i]);
@@ -170,22 +174,21 @@ void showInputForm()
 void receiveFormInput(int empID)
 {
     struct Employee temp;
+    temp.id = empID;
     gotoxy(15, 10);
-    scanf("%i", &temp.id);
-    gotoxy(15, 13);
     scanf("%s", temp.name);
-    gotoxy(15, 16);
+    gotoxy(15, 13);
     scanf("%lf", &temp.salary);
-    gotoxy(15, 19);
+    gotoxy(15, 16);
     scanf("%lf", &temp.tax);
-    gotoxy(15, 22);
+    gotoxy(15, 19);
     scanf("%s", temp.address);
 
     gotoxy(55, 10);
     scanf("%i", &temp.age);
     gotoxy(55, 13);
     scanf("%s", temp.gender);
-    gotoxy(15, 19);
+    gotoxy(55, 19);
     scanf("%lf", &temp.overTime);
     EArr[empID] = temp;
 }
