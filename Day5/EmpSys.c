@@ -55,12 +55,10 @@ void showInputForm()
         printf(inpFeilds[i + 5]);
     }
 }
-void showEmpByID()
-{
-}
-void showAllEmp()
-{
-}
+void showEmpByID() {}
+void showAllEmp() {}
+void DeleteEmpById() {}
+void DeleteAllEmp() {}
 void menu()
 {
     char inp, ExitFlag = 0;
