@@ -7,6 +7,8 @@
 #define HighLightPen 0XF0
 #define Enter 0x0D
 #define ESC 27
+#define Down 80
+#define UP 72
 
 void gotoxy(int column, int line)
 {
@@ -50,12 +52,38 @@ int main(int argc, char const *argv[])
             ExitFlag = 1;
             break;
         case Enter:
-            if (current == 2)ExitFlag = 1;
-            else if (current == 1);
-            else;
+            if (current == 2)
+                ExitFlag = 1;
+            else if (current == 1)
+                ;
+            else
+                ;
 
             break;
 
+        case -32:
+            switch (inp)
+            {
+            case UP:
+                current--;
+                if (current < 0)
+                {
+                    current = 2;
+                }
+
+                break;
+            case Down:
+                current++;
+                if (current > 2)
+                {
+                    current = 0;
+                }
+                break;
+
+            default:
+                break;
+            }
+            break;
         default:
             break;
         }
