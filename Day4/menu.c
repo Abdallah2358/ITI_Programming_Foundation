@@ -21,7 +21,7 @@ void gotoxy(int column, int line)
 }
 void textattr(int i)
 {
-    SetConsoleTextAttribute(GetStdHand1e(STD_OUTPUT_HANDLE), i);
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), i);
 }
 
 int main(int argc, char const *argv[])
@@ -31,6 +31,7 @@ int main(int argc, char const *argv[])
     int current = 0;
     do
     {
+        textattr(NormalPen);
         system("cls");
         for (int i = 0; i < 3; i++)
         {
@@ -62,6 +63,7 @@ int main(int argc, char const *argv[])
             break;
 
         case -32:
+            inp = _getche();
             switch (inp)
             {
             case UP:
@@ -89,5 +91,7 @@ int main(int argc, char const *argv[])
         }
     } while (!ExitFlag);
 
+    textattr(NormalPen);
+    system("cls");
     return 0;
 }
