@@ -22,7 +22,9 @@ struct Employee
     double overTime;
 };
 
+// Global Variables
 struct Employee EArr[10];
+int MenuCurrent = 0, ExitFlag = 0, currentView = 0; // 0 main
 
 void gotoxy(int column, int line)
 {
@@ -37,8 +39,85 @@ void textattr(int i)
 {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), i);
 }
+void showMainMenu()
+{
+    printf("working");
+    char choices[6][15] = {" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"};
+    textattr(NormalPen);
+    system("cls");
+    for (int i = 0; i < 6; i++)
+    {
+        gotoxy(15, 10 + 3 * i);
+        if (MenuCurrent == i)
+        {
+            textattr(HighLightPen);
+        }
+        else
+        {
+            textattr(NormalPen);
+        }
+        printf(choices[i]);
+    }
+}
+void initId()
+{
+    for (int i = 0; i < 10; i++)
+    {
+        EArr[i].id = -1;
+    }
+}
+void Init()
+{
+    showMainMenu();
+    initId();
+}
+void updateMainMenu()
+{
+    char inp;
+    inp = _getche();
+    switch (inp)
+    {
+    case ESC:
+        ExitFlag = 1;
+        break;
+    case Enter:
+        //" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"
+        if (MenuCurrent == 0)
+            showInputForm();
+        else if (MenuCurrent == 1)
+            showEmpByID();
+        else if (MenuCurrent == 2)
+            showAllEmp();
+        else if (MenuCurrent == 3)
+            DeleteEmpById();
+        else if (MenuCurrent == 4)
+            DeleteAllEmp();
+        else if (MenuCurrent == 5)
+            ExitFlag = 1;
+        break;
+
+    case -32:
+        inp = _getche();
+        switch (inp)
+        {
+        case UP:
+            MenuCurrent--;
+            if (MenuCurrent < 0)
+                MenuCurrent = 5;
+            break;
+        case Down:
+            MenuCurrent++;
+            if (MenuCurrent > 5)
+                MenuCurrent = 0;
+            break;
+        }
+        break;
+    }
+    showMainMenu();
+}
 void showInputForm()
 {
+    char returnFlag = 0;
     textattr(NormalPen);
     system("cls");
 
@@ -51,130 +130,41 @@ void showInputForm()
     }
     for (int i = 0; i < 3; i++)
     {
-        gotoxy(5, 10 + 3 * i);
+        gotoxy(40, 10 + 3 * i);
         printf(inpFeilds[i + 5]);
     }
+}
+void receiveInput(int EmpId)
+{
 }
 void showEmpByID() {}
 void showAllEmp() {}
 void DeleteEmpById() {}
 void DeleteAllEmp() {}
-void menu()
+
+int main()
 {
-    char inp, ExitFlag = 0;
-    char choices[6][15] = {" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"};
-    int current = 0;
+    Init();
+    int temp;
     do
     {
-        textattr(NormalPen);
-        system("cls");
-        for (int i = 0; i < 6; i++)
+        switch (currentView)
         {
-            gotoxy(15, 10 + 3 * i);
-            if (current == i)
-            {
-                textattr(HighLightPen);
-            }
-            else
-            {
-                textattr(NormalPen);
-            }
-            printf(choices[i]);
-        }
-        inp = _getche();
-        switch (inp)
-        {
-        case ESC:
-            ExitFlag = 1;
+        case 0:
+            updateMainMenu();
             break;
-        case Enter:
-            //" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"
-            if (current == 0)
-                showInputForm();
-            else if (current == 1)
-                showEmpByID();
-            else if (current == 2)
-                showAllEmp();
-            else if (current == 3)
-                DeleteEmpById();
-            else if (current == 4)
-                DeleteAllEmp();
-            else if (current == 5)
-                ExitFlag = 1;
-            else
-                ;
-
-            break;
-
-        case -32:
-            inp = _getche();
-            switch (inp)
-            {
-            case UP:
-                current--;
-                if (current < 0)
-                {
-                    current = 5;
-                }
-
-                break;
-            case Down:
-                current++;
-                if (current > 5)
-                {
-                    current = 0;
-                }
-                break;
-
-            default:
-                break;
-            }
+        case 1:
+            printf("Please Choose EmpID between 1 and 10 : ");
+            scanf("%i", temp);
+            showInputForm();
+            receiveInput(temp - 1);
+            showMainMenu();
+            currentView = 0;
             break;
         default:
             break;
         }
     } while (!ExitFlag);
-}
 
-/// 112 Byte
-
-int main()
-{
-    int i;
-
-    menu();
-    /*  for (i = 0; i < 3; i++)
-     {
-         printf("Enter Employee ID : \n");
-         scanf("%i", &EArr[i].ID);
-         _flushall();
-         printf("Enter Employee Name : \n");
-         gets(EArr[i].Name);
-         _flushall();
-         printf("Enter Employee Salary : \n");
-         scanf("%lf", &EArr[i].Salary);
-
-         printf("%i .Employee : %s , Salary %lf", EArr[i].ID, EArr[i].Name, EArr[i].Salary);
-
-         _getch();
-         system("cls");
-     } */
-    /*
-
-    struct Employee E; ///Allocation 112 Byte in Main Stack Frame
-
-    E.ID = -1 ;
-
-    printf("Enter Employee ID : \n");
-    scanf("%i" , &E.ID);
-    _flushall();
-    printf("Enter Employee Name : \n");
-    gets(E.Name);
-    _flushall();
-    printf("Enter Employee Salary : \n");
-    scanf("%lf" , &E.Salary);
-
-    printf("%i .Employee : %s , Salary %lf",E.ID , E.Name , E.Salary);
-*/
     return 0;
 }
