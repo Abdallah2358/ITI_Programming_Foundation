@@ -87,18 +87,9 @@ void updateMainMenu()
         break;
     case Enter:
         //" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"
-        if (MenuCurrent == 0)
-            currentView = 1;
-        else if (MenuCurrent == 1)
-            currentView = 2;
-        else if (MenuCurrent == 2)
-            showAllEmp();
-        else if (MenuCurrent == 3)
-            DeleteEmpById();
-        else if (MenuCurrent == 4)
-            DeleteAllEmp();
-        else if (MenuCurrent == 5)
+        if (MenuCurrent == 5)
             ExitFlag = 1;
+        currentView = MenuCurrent + 1;
         break;
     case -32:
         inp = _getche();
@@ -202,7 +193,7 @@ void showNetSalary(int id)
     clearScreen();
     double net = EArr[id].salary + EArr[id].overTime - EArr[id].tax;
     printEmpData(id);
-    printf("Net Salary : %lf\n", id, net);
+    printf("Net Salary : %lf\n", net);
     printf("Press Any key to return to main menu\n");
     _getch();
 }
@@ -210,7 +201,7 @@ void showEmpByID()
 {
     clearScreen();
     int id;
-    char returnFlag = 0;
+    char returnFlag = 0, ch;
     do
     {
         printf("Please Choose EmpID between 1 and 10 : ");
@@ -218,12 +209,14 @@ void showEmpByID()
         if (isIdExist(id))
         {
             printEmpData(id);
+            printf("\nPress Any key to return to main menu\n");
+            _getch();
         }
         else
         {
             printf("\nThis ID Does Not Exist.\n");
             printf("\nPlease Try Again or press Backspace to return\n");
-            char ch = _getch();
+            ch = _getch();
             if (ch == 8)
                 returnFlag = 1;
         }
@@ -297,6 +290,14 @@ int main()
             break;
         case 3:
             showAllEmp();
+            returnToMainMenu();
+            break;
+        case 4:
+            DeleteEmpById();
+            returnToMainMenu();
+            break;
+        case 5:
+            DeleteAllEmp();
             returnToMainMenu();
             break;
         default:
