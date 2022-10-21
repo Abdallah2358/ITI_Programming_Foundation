@@ -55,7 +55,7 @@ void clearScreen()
 void showMainMenu()
 {
     clearScreen();
-    char choices[6][15] = {" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"};
+    char choices[6][20] = {" New ", "Display By ID", "Display All", "Delete By ID", "Delete All", "Exit"};
     for (int i = 0; i < 6; i++)
     {
         gotoxy(15, 10 + 3 * i);
@@ -134,7 +134,6 @@ char isIdExist(int empId)
 
 int chooseEmpID()
 {
-    clearScreen();
     int temp;
     do
     {
@@ -151,7 +150,6 @@ int chooseEmpID()
 
 void showInputForm()
 {
-    clearScreen();
     char returnFlag = 0;
     char inpFields[8][15] = {"Name :", "Salary :", "Tax :", "Address :", "Age :", "Gender :", "Over Time :"};
     int shift = 3;
@@ -190,7 +188,6 @@ void receiveFormInput(int empID)
 }
 void showNetSalary(int id)
 {
-    clearScreen();
     double net = EArr[id].salary + EArr[id].overTime - EArr[id].tax;
     printEmpData(id);
     printf("Net Salary : %lf\n", net);
@@ -199,7 +196,6 @@ void showNetSalary(int id)
 }
 void showEmpByID()
 {
-    clearScreen();
     int id;
     char returnFlag = 0, ch;
     do
@@ -231,10 +227,11 @@ void showAllEmp()
             printEmpData(i);
         }
     }
+    printf("\nPress Any key to return to main menu\n");
+    _getch();
 }
 void DeleteEmpById()
 {
-    clearScreen();
     int id;
     char returnFlag = 0;
     do
@@ -245,11 +242,13 @@ void DeleteEmpById()
         {
             EArr[id].id = -1;
             returnFlag = 1;
+            printf("\nEmp #%i Deleted\nPress Any key to return to main menu\n", id);
+            _getch();
         }
         else
         {
             printf("\nThis ID Does Not Exist.\n");
-            printf("\nPlease Try Again or press Backspace to return\n");
+            printf("\nPlease Try Again or press Backspace to return to Main Menu\n");
             char ch = _getch();
             if (ch == 8)
                 returnFlag = 1;
@@ -258,12 +257,32 @@ void DeleteEmpById()
 }
 void DeleteAllEmp()
 {
-    clearScreen();
-    printf("Are You sure You want to delete !!! ALL !!! Employee Data ? y/n\n");
-    char ch = _getche();
-    if (ch == 'y')
-        for (int i = 0; i < i; i++)
-            EArr[i].id = -1;
+
+    char returnFlag = 0;
+    char ch;
+    do
+    {
+        printf("Are You sure You want to delete !!! ALL !!! Employee Data ? y/n\n");
+        ch = _getche();
+        if (ch == 'y')
+        {
+            for (int i = 0; i < i; i++)
+                EArr[i].id = -1;
+            printf("\nThanks, All Emp Data was deleted press any key to return to Main Menu \n");
+            _getch();
+        }
+        else if (ch == 'n')
+        {
+            printf("\nThanks, Nothing was deleted press any key to return to Main Menu \n");
+            _getch();
+        }
+        else
+        {
+            printf("\nInValid Input, Please Try Again or press Backspace to return to Main Menu\n");
+            _getch();
+            clearScreen();
+        }
+    } while (ch != 'y' && ch != 'n' && !returnFlag);
 }
 
 int main()
@@ -278,25 +297,31 @@ int main()
             updateMainMenu();
             break;
         case 1:
+            clearScreen();
             temp = chooseEmpID(); // a waste of 4 bytes :(
             showInputForm();
             receiveFormInput(temp);
+            clearScreen();
             showNetSalary(temp);
             returnToMainMenu();
             break;
         case 2:
+            clearScreen();
             showEmpByID();
             returnToMainMenu();
             break;
         case 3:
+            clearScreen();
             showAllEmp();
             returnToMainMenu();
             break;
         case 4:
+            clearScreen();
             DeleteEmpById();
             returnToMainMenu();
             break;
         case 5:
+            clearScreen();
             DeleteAllEmp();
             returnToMainMenu();
             break;
