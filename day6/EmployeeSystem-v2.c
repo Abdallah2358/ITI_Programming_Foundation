@@ -9,7 +9,12 @@
 #define ESC 27
 #define Down 80
 #define UP 72
+#define aSmall 97
+#define zSmall 122
+#define zero 48
+#define nine 57
 
+// Structures
 struct Employee
 {
     int id;
@@ -25,6 +30,7 @@ struct Employee
 // Global Variables
 struct Employee EArr[10];
 int MenuCurrent = 0, ExitFlag = 0, currentView = 0; // 0 main
+
 // emp func
 void printEmpData(empID)
 {
@@ -164,19 +170,25 @@ void showInputForm()
         printf(inpFields[i + 4]);
     }
 }
+
 char *lineEditor(int x, int y, char start, char end)
 {
-    int i = 11;
+    int i = 0;
     char line[11], *pCurrent, *pEnd;
     char ch;
-    while (i)
+    while (i < 11)
     {
         ch = getch();
         if (ch >= start && ch <= end)
         {
             gotoxy(x++, y);
             printf("%c", ch);
+            line[i] = ch;
             i--;
+        }
+        else if (ch == Enter)
+        {
+            line[i] = '\0';
         }
     }
     return line;
@@ -185,7 +197,8 @@ void receiveFormInput(int empID)
 {
     struct Employee temp;
     temp.id = empID;
-    gotoxy(15, 10);
+    strcpy(temp.name, lineEditor(15, 10, aSmall, zSmall));
+
     scanf("%s", temp.name);
     gotoxy(15, 13);
     scanf("%lf", &temp.salary);
