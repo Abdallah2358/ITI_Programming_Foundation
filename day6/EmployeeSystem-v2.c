@@ -179,7 +179,7 @@ char *lineEditor(int x, int y, char start, char end)
     while (i < 11)
     {
         ch = getch();
-        if (ch >= start && ch <= end)
+        if (ch >= start && ch <= end || ch == '.')
         {
             gotoxy(x++, y);
             printf("%c", ch);
@@ -198,21 +198,16 @@ void receiveFormInput(int empID)
     struct Employee temp;
     temp.id = empID;
     strcpy(temp.name, lineEditor(15, 10, aSmall, zSmall));
+    temp.salary = atof(lineEditor(15, 13, zero, nine));
+    temp.tax = atof(lineEditor(15, 16, zero, nine));
 
-    scanf("%s", temp.name);
-    gotoxy(15, 13);
-    scanf("%lf", &temp.salary);
-    gotoxy(15, 16);
-    scanf("%lf", &temp.tax);
-    gotoxy(15, 19);
-    scanf("%s", temp.address);
+    strcpy(temp.address, lineEditor(15, 19, aSmall, zSmall));
 
-    gotoxy(55, 10);
-    scanf("%i", &temp.age);
-    gotoxy(55, 13);
-    scanf("%s", temp.gender);
-    gotoxy(55, 16);
-    scanf("%lf", &temp.overTime);
+    temp.age = atoi(lineEditor(55, 10, zero, nine));
+
+    strcpy(temp.gender, lineEditor(55, 13, aSmall, zSmall));
+
+    temp.overTime = atof(lineEditor(55, 16, zero, nine));
 
     EArr[empID] = temp;
 }
