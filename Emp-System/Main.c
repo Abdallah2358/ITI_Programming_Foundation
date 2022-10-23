@@ -25,6 +25,13 @@ struct Employee
 // Global Variables
 struct Employee EArr[10];
 int MenuCurrent = 0, ExitFlag = 0, currentView = 0; // 0 main
+// emp func
+void printEmpData(empID)
+{
+    struct Employee temp = EArr[empID];
+    printf("\nEmployee #%i\nName : %s ,Age: %d ,Gender: %s ,Salary : %.2lf ,Over Time : %.2lf ,Tax : %.2lf ,Address : %s \n",
+           temp.id, temp.name, temp.age, temp.gender, temp.salary, temp.overTime, temp.tax, temp.address);
+}
 
 // Writing to console Functions
 void gotoxy(int column, int line)
@@ -32,9 +39,7 @@ void gotoxy(int column, int line)
     COORD coord;
     coord.X = column;
     coord.Y = line;
-    SetConsoleCursorPosition(
-        GetStdHandle(STD_OUTPUT_HANDLE),
-        coord);
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 void textattr(int i)
 {
@@ -50,7 +55,7 @@ void clearScreen()
 void showMainMenu()
 {
     clearScreen();
-    char choices[6][15] = {" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"};
+    char choices[6][20] = {" New ", "Display By ID", "Display All", "Delete By ID", "Delete All", "Exit"};
     for (int i = 0; i < 6; i++)
     {
         gotoxy(15, 10 + 3 * i);
@@ -66,6 +71,11 @@ void showMainMenu()
     }
 }
 
+void returnToMainMenu()
+{
+    showMainMenu();
+    currentView = 0;
+}
 void updateMainMenu()
 {
     char inp;
@@ -77,20 +87,10 @@ void updateMainMenu()
         break;
     case Enter:
         //" New ", "DisplayByID", "DisplayAll", "DeleteByID", "DeleteAll", "Exit"
-        if (MenuCurrent == 0)
-            currentView = 1;
-        else if (MenuCurrent == 1)
-            showEmpByID();
-        else if (MenuCurrent == 2)
-            showAllEmp();
-        else if (MenuCurrent == 3)
-            DeleteEmpById();
-        else if (MenuCurrent == 4)
-            DeleteAllEmp();
-        else if (MenuCurrent == 5)
+        if (MenuCurrent == 5)
             ExitFlag = 1;
+        currentView = MenuCurrent + 1;
         break;
-
     case -32:
         inp = _getche();
         switch (inp)
@@ -127,7 +127,6 @@ void Init()
 }
 
 // Input Functions
-
 char isIdExist(int empId)
 {
     return EArr[empId].id != -1;
@@ -135,12 +134,11 @@ char isIdExist(int empId)
 
 int chooseEmpID()
 {
-    clearScreen();
     int temp;
     do
     {
         printf("Please Choose EmpID between 1 and 10 : ");
-        scanf("%i", temp);
+        scanf("%i", &temp);
         if (isIdExist(temp))
         {
             printf("\nThis ID already used.\n");
@@ -152,11 +150,10 @@ int chooseEmpID()
 
 void showInputForm()
 {
-    clearScreen();
     char returnFlag = 0;
-    char inpFields[8][15] = {"ID", "Name", "Salary", "Tax", "Address", "Age", "Gender", "Over Time"};
+    char inpFields[8][15] = {"Name :", "Salary :", "Tax :", "Address :", "Age :", "Gender :", "Over Time :"};
     int shift = 3;
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 4; i++)
     {
         gotoxy(5, 10 + 3 * i);
         printf(inpFields[i]);
@@ -164,45 +161,129 @@ void showInputForm()
     for (int i = 0; i < 3; i++)
     {
         gotoxy(40, 10 + 3 * i);
-        printf(inpFields[i + 5]);
+        printf(inpFields[i + 4]);
     }
 }
 void receiveFormInput(int empID)
 {
     struct Employee temp;
+    temp.id = empID;
     gotoxy(15, 10);
-    scanf("%i", &temp.id);
-    gotoxy(15, 13);
     scanf("%s", temp.name);
-    gotoxy(15, 16);
+    gotoxy(15, 13);
     scanf("%lf", &temp.salary);
-    gotoxy(15, 19);
+    gotoxy(15, 16);
     scanf("%lf", &temp.tax);
-    gotoxy(15, 22);
+    gotoxy(15, 19);
     scanf("%s", temp.address);
 
     gotoxy(55, 10);
     scanf("%i", &temp.age);
     gotoxy(55, 13);
     scanf("%s", temp.gender);
-    gotoxy(15, 19);
+    gotoxy(55, 16);
     scanf("%lf", &temp.overTime);
+
     EArr[empID] = temp;
 }
 void showNetSalary(int id)
 {
-    clearScreen();
     double net = EArr[id].salary + EArr[id].overTime - EArr[id].tax;
-    printf("Employee #%i Net Salary : %lf", id, net);
-    printf("Press Any key to return to main menu");
+    printEmpData(id);
+    printf("Net Salary : %lf\n", net);
+    printf("Press Any key to return to main menu\n");
     _getch();
 }
 void showEmpByID()
 {
+    int id;
+    char returnFlag = 0, ch;
+    do
+    {
+        printf("Please Choose EmpID between 1 and 10 : ");
+        scanf("%i", &id);
+        if (isIdExist(id))
+        {
+            printEmpData(id);
+            printf("\nPress Any key to return to main menu\n");
+            _getch();
+        }
+        else
+        {
+            printf("\nThis ID Does Not Exist.\n");
+            printf("\nPlease Try Again or press Backspace to return\n");
+            ch = _getch();
+            if (ch == 8)
+                returnFlag = 1;
+        }
+    } while (!isIdExist(id) && !returnFlag);
 }
-void showAllEmp() {}
-void DeleteEmpById() {}
-void DeleteAllEmp() {}
+void showAllEmp()
+{
+    for (int i = 0; i < 10; i++)
+    {
+        if (isIdExist(i))
+        {
+            printEmpData(i);
+        }
+    }
+    printf("\nPress Any key to return to main menu\n");
+    _getch();
+}
+void DeleteEmpById()
+{
+    int id;
+    char returnFlag = 0;
+    do
+    {
+        printf("Please Choose EmpID between 1 and 10 : ");
+        scanf("%i", &id);
+        if (isIdExist(id))
+        {
+            EArr[id].id = -1;
+            returnFlag = 1;
+            printf("\nEmp #%i Deleted\nPress Any key to return to main menu\n", id);
+            _getch();
+        }
+        else
+        {
+            printf("\nThis ID Does Not Exist.\n");
+            printf("\nPlease Try Again or press Backspace to return to Main Menu\n");
+            char ch = _getch();
+            if (ch == 8)
+                returnFlag = 1;
+        }
+    } while (!isIdExist(id) && !returnFlag);
+}
+void DeleteAllEmp()
+{
+
+    char returnFlag = 0;
+    char ch;
+    do
+    {
+        printf("Are You sure You want to delete !!! ALL !!! Employee Data ? y/n\n");
+        ch = _getche();
+        if (ch == 'y')
+        {
+            for (int i = 0; i < i; i++)
+                EArr[i].id = -1;
+            printf("\nThanks, All Emp Data was deleted press any key to return to Main Menu \n");
+            _getch();
+        }
+        else if (ch == 'n')
+        {
+            printf("\nThanks, Nothing was deleted press any key to return to Main Menu \n");
+            _getch();
+        }
+        else
+        {
+            printf("\nInValid Input, Please Try Again or press Backspace to return to Main Menu\n");
+            _getch();
+            clearScreen();
+        }
+    } while (ch != 'y' && ch != 'n' && !returnFlag);
+}
 
 int main()
 {
@@ -216,12 +297,33 @@ int main()
             updateMainMenu();
             break;
         case 1:
+            clearScreen();
             temp = chooseEmpID(); // a waste of 4 bytes :(
             showInputForm();
             receiveFormInput(temp);
+            clearScreen();
             showNetSalary(temp);
-            showMainMenu();
-            currentView = 0;
+            returnToMainMenu();
+            break;
+        case 2:
+            clearScreen();
+            showEmpByID();
+            returnToMainMenu();
+            break;
+        case 3:
+            clearScreen();
+            showAllEmp();
+            returnToMainMenu();
+            break;
+        case 4:
+            clearScreen();
+            DeleteEmpById();
+            returnToMainMenu();
+            break;
+        case 5:
+            clearScreen();
+            DeleteAllEmp();
+            returnToMainMenu();
             break;
         default:
             break;
