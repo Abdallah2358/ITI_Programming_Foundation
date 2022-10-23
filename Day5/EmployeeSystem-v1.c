@@ -164,6 +164,7 @@ void showInputForm()
         printf(inpFields[i + 4]);
     }
 }
+
 void receiveFormInput(int empID)
 {
     struct Employee temp;
@@ -186,6 +187,7 @@ void receiveFormInput(int empID)
 
     EArr[empID] = temp;
 }
+
 void showNetSalary(int id)
 {
     double net = EArr[id].salary + EArr[id].overTime - EArr[id].tax;
@@ -194,6 +196,7 @@ void showNetSalary(int id)
     printf("Press Any key to return to main menu\n");
     _getch();
 }
+
 void showEmpByID()
 {
     int id;
@@ -218,6 +221,7 @@ void showEmpByID()
         }
     } while (!isIdExist(id) && !returnFlag);
 }
+
 void showAllEmp()
 {
     for (int i = 0; i < 10; i++)
@@ -230,6 +234,7 @@ void showAllEmp()
     printf("\nPress Any key to return to main menu\n");
     _getch();
 }
+
 void DeleteEmpById()
 {
     int id;
