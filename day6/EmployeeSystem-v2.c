@@ -7,8 +7,12 @@
 #define HighLightPen 0XF0
 #define Enter 0x0D
 #define ESC 27
-#define Down 80
 #define UP 72
+#define Down 80
+#define RIGHT 77
+#define LEFT 75
+#define Tap 9
+#define BackSpace 8
 #define aSmall 97
 #define zSmall 122
 #define zero 48
@@ -55,6 +59,17 @@ void clearScreen()
 {
     textattr(NormalPen);
     system("cls");
+}
+
+// Helper fuc
+void copyStr(char *dest, char *src)
+{
+    int i = 0;
+    for (; src[i] != '\0'; i++)
+    {
+        dest[i] = src[i];
+    }
+    dest[i] = '\0';
 }
 
 // Main Menu Functions
@@ -174,38 +189,115 @@ void showInputForm()
 char *lineEditor(int x, int y, char start, char end)
 {
     int i = 0;
-    char line[11], *pCurrent, *pEnd;
+    static char line[11];
+    char *pCurrent = line, *pEnd = line;
     char ch;
-    while (i < 11)
+
+    while (pEnd < &line[11])
     {
-        ch = getch();
-        if (ch >= start && ch <= end || ch == '.')
+        gotoxy(x, y);
+        ch = _getch();
+
+        if ((ch >= start && ch <= end) || ch == '.')
         {
-            gotoxy(x++, y);
             printf("%c", ch);
             line[i] = ch;
-            i--;
+            pEnd++;
+            pCurrent++;
+            i++;
+            x++;
         }
-        else if (ch == Enter)
+        else
         {
-            line[i] = '\0';
+            switch (ch)
+            {
+            case Enter:
+                line[i] = '\0';
+                return;
+                break;
+
+            case ESC:
+                exit(0);
+
+            case BackSpace:
+                if (pCurrent == pEnd && i > 0)
+                {
+                    *pEnd = '\0';   // remove the last letter from array;
+                    gotoxy(--x, y); // move back
+                    printf(" ");    // remove character
+                    i--;            // reduce i
+                    pEnd--;
+                    pCurrent--;
+                }
+                else if (pCurrent > line)
+                {
+                    // go back 1
+                    x--;
+                    pCurrent--;
+
+                    // shift array
+                    int j = 0;
+                    for (; j < pEnd - pCurrent - 1; j++)
+                    {
+                        *(pCurrent + j) = *(pCurrent + j + 1);
+                        gotoxy(x + j, y);
+                        printf("%c", *(pCurrent + j + 1));
+                    }
+
+                    // remove the last char from screen
+                    gotoxy(x + j, y);
+                    printf(" ");
+
+                    // put null terminator at the end
+                    *pEnd = '\0';
+                    pEnd--;
+                    i--;
+                }
+                break;
+            case -32:
+                ch = getch();
+                switch (ch)
+                {
+                case RIGHT:
+                    if (pCurrent < pEnd)
+                    {
+                        gotoxy(++x, y);
+                        pCurrent++;
+                    }
+
+                    break;
+                case LEFT:
+                    if (pCurrent > line)
+                    {
+                        gotoxy(--x, y);
+                        pCurrent--;
+                    }
+                    break;
+                }
+                break;
+                // case:
+
+                //     break;
+            }
         }
     }
+    line[i] = '\0';
     return line;
 }
+
 void receiveFormInput(int empID)
 {
     struct Employee temp;
     temp.id = empID;
-    strcpy(temp.name, lineEditor(15, 10, aSmall, zSmall));
+
+    copyStr(temp.name, lineEditor(15, 10, aSmall, zSmall));
     temp.salary = atof(lineEditor(15, 13, zero, nine));
     temp.tax = atof(lineEditor(15, 16, zero, nine));
-
-    strcpy(temp.address, lineEditor(15, 19, aSmall, zSmall));
+    copyStr(temp.address, lineEditor(15, 19, aSmall, zSmall));
 
     temp.age = atoi(lineEditor(55, 10, zero, nine));
 
-    strcpy(temp.gender, lineEditor(55, 13, aSmall, zSmall));
+    copyStr(temp.gender, lineEditor(55, 13, aSmall, zSmall));
 
     temp.overTime = atof(lineEditor(55, 16, zero, nine));
 
